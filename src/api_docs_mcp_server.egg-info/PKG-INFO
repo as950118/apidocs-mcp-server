@@ -1,0 +1,23 @@
+Metadata-Version: 2.4
+Name: api-docs-mcp-server
+Version: 1.1.0
+Summary: An MCP server that analyzes API documentation and recommends frontend implementation methods.
+Author-email: MCP Server Developer <dev@example.com>
+License: MIT License
+Project-URL: Homepage, https://github.com/example/api-docs-mcp-server
+Project-URL: Bug Tracker, https://github.com/example/api-docs-mcp-server/issues
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: mcp>=1.9.0
+Requires-Dist: requests
+Requires-Dist: beautifulsoup4
+Requires-Dist: uvicorn
+Requires-Dist: pydantic
+Requires-Dist: python-dotenv
+
+# API Docs Analysis MCP Server
+
+This is an MCP server that analyzes API documentation (Swagger/OpenAPI or HTML) and recommends frontend implementation methods.

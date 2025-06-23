@@ -1,0 +1,25 @@
+# Smithery MCP Configuration File
+# This file defines how the MCP server is built, run, and registered within the Smithery platform.
+
+mcp_version: '1.0'
+
+# General information about the MCP. This metadata is used for display and management in Smithery.
+name: api-docs-analyzer
+version: '1.1.0'
+description: An MCP server that analyzes API documentation (Swagger/OpenAPI or HTML) and recommends frontend implementation methods.
+author: "MCP Server Developer <dev@example.com>"
+
+# Build configuration tells Smithery how to build the container for this MCP.
+build:
+  # The context directory for the Docker build. '.' refers to the project root.
+  context: .
+  # The path to the Dockerfile within the context directory.
+  dockerfile: Dockerfile
+
+# Tool Definition
+# While FastMCP discovers tools automatically, this section can provide explicit information
+# to the Smithery platform, ensuring proper registration.
+tools:
+  - name: analyze_api_docs
+    description: "Analyzes API documentation at a given URL and recommends frontend implementation strategies."
+    entrypoint: "api_docs_mcp_server:server" 
