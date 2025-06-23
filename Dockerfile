@@ -10,14 +10,16 @@ ENV PYTHONUNBUFFERED 1
 # 3. 애플리케이션 코드를 위한 작업 디렉토리 설정
 WORKDIR /app
 
-# 4. 의존성 설치
-#    - pyproject.toml을 먼저 복사하여 Docker의 레이어 캐싱을 활용합니다.
-#    - 의존성이 변경되지 않으면 이 레이어는 재사용됩니다.
+# 4. 의존성 설치를 위한 파일과 소스 코드 복사
+#    - pyproject.toml과 src 디렉토리를 먼저 복사합니다.
+#    - 이 순서는 `pip install .`이 소스 코드를 찾을 수 있도록 보장합니다.
 COPY pyproject.toml README.md ./
-RUN pip install --no-cache-dir .
-
-# 5. 애플리케이션 코드 복사
 COPY src/ /app/src
+
+# 5. 의존성과 프로젝트 패키지를 설치합니다.
+#    - `pip install .` 명령어는 pyproject.toml을 읽어 의존성을 설치하고
+#    - src 디렉토리의 코드를 패키지로 설치합니다.
+RUN pip install --no-cache-dir .
 
 # 6. 컨테이너가 리슨할 포트 지정
 EXPOSE 8080
