@@ -28,4 +28,5 @@ EXPOSE 8080
 #    - `mcp run`을 사용하여 FastMCP 서버를 실행합니다.
 #    - `api_docs_mcp_server:server`는 api_docs_mcp_server 패키지의 server 객체를 의미합니다.
 #    - `--host 0.0.0.0`은 컨테이너 외부에서 접근 가능하도록 합니다.
-CMD ["mcp", "run", "api_docs_mcp_server:server", "--host", "0.0.0.0", "--port", "8080"] 
+#    - Smithery가 제공하는 $PORT 환경 변수를 사용하고, 없을 경우 8080을 기본값으로 사용합니다.
+CMD mcp run api_docs_mcp_server:server --host 0.0.0.0 --port ${PORT:-8080} 

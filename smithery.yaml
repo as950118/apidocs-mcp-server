@@ -1,3 +1,21 @@
+# Smithery Configuration for Custom Container Deployment
+# Based on the official documentation: https://smithery.ai/docs/build/deployments
+runtime: "container"
+
+# Defines how to build the Docker container.
+build:
+  # Path to the Dockerfile, relative to the repository root.
+  dockerfile: "Dockerfile"
+  # The build context path for Docker. "." means the repository root.
+  dockerBuildPath: "."
+
+# Defines how Smithery should run the container.
+# The 'mcp run' command starts an HTTP server, which aligns with the 'http' type.
+startCommand:
+  type: "http"
+  # Our server does not require any global configuration parameters at startup.
+  # Authentication details are passed per tool call, so configSchema is omitted.
+
 # Smithery MCP Configuration File
 # This file defines how the MCP server is built, run, and registered within the Smithery platform.
 
@@ -8,13 +26,6 @@ name: api-docs-analyzer
 version: '1.1.0'
 description: An MCP server that analyzes API documentation (Swagger/OpenAPI or HTML) and recommends frontend implementation methods.
 author: "MCP Server Developer <dev@example.com>"
-
-# Build configuration tells Smithery how to build the container for this MCP.
-build:
-  # The context directory for the Docker build. '.' refers to the project root.
-  context: .
-  # The path to the Dockerfile within the context directory.
-  dockerfile: Dockerfile
 
 # Tool Definition
 # While FastMCP discovers tools automatically, this section can provide explicit information
