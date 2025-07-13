@@ -7,6 +7,10 @@ API 문서를 분석하여 프론트엔드 구현 방법을 추천해주는 MCP 
 - **API 문서 자동 분석**: Swagger/OpenAPI JSON 또는 HTML 형태의 API 문서를 자동으로 분석
 - **프론트엔드 추천**: 분석된 API를 기반으로 프론트엔드 페이지 구현 방법을 추천
 - **인증 지원**: 쿠키 기반 인증이 필요한 API 문서도 분석 가능
+- **API 상태 확인**: 엔드포인트의 상태와 응답 시간을 확인
+- **코드 예시 생성**: JavaScript/TypeScript, Python 코드 예시 자동 생성
+- **엔드포인트 검색**: 키워드 기반 API 엔드포인트 검색
+- **문서 내보내기**: JSON, Markdown 형식으로 API 문서 내보내기
 - **FastMCP 기반**: 최신 FastMCP 규격을 사용하여 빠르고 효율적인 서버 구현
 
 ## 📋 지원하는 API 문서 형식
@@ -64,6 +68,7 @@ API 문서를 분석하여 프론트엔드 구현 방법을 추천해주는 MCP 
 from mcp.client import ClientSession
 
 async with ClientSession("http://localhost:8080") as session:
+    # API 문서 분석
     result = await session.call_tool(
         "analyze_api_docs",
         {
@@ -72,12 +77,82 @@ async with ClientSession("http://localhost:8080") as session:
         }
     )
     print(result.content)
+    
+    # API 상태 확인
+    health_result = await session.call_tool(
+        "health_check_api",
+        {
+            "url": "https://api.example.com/swagger.json",
+            "max_endpoints": 5
+        }
+    )
+    print(health_result.content)
+    
+    # 코드 예시 생성
+    code_result = await session.call_tool(
+        "generate_code_examples",
+        {
+            "url": "https://api.example.com/swagger.json",
+            "endpoint_path": "/api/users"
+        }
+    )
+    print(code_result.content)
 ```
 
-### 도구 파라미터
+## 🛠️ 사용 가능한 도구들
 
-- **url** (필수): 분석할 API 문서의 URL
-- **cookies** (선택): 인증에 필요한 쿠키 딕셔너리
+### 1. `analyze_api_docs`
+API 문서를 분석하여 프론트엔드 페이지 구현 방법을 추천합니다.
+
+**파라미터:**
+- `url` (필수): 분석할 API 문서의 URL
+- `cookies` (선택): 인증에 필요한 쿠키 딕셔너리
+
+### 2. `get_api_endpoints`
+API 문서에서 모든 엔드포인트 목록을 가져옵니다.
+
+**파라미터:**
+- `url` (필수): 분석할 API 문서의 URL
+- `cookies` (선택): 인증에 필요한 쿠키 딕셔너리
+
+### 3. `health_check_api`
+API 엔드포인트들의 상태를 확인합니다.
+
+**파라미터:**
+- `url` (필수): API 문서의 URL
+- `cookies` (선택): 인증에 필요한 쿠키 딕셔너리
+- `max_endpoints` (선택): 테스트할 최대 엔드포인트 수 (기본값: 10)
+
+### 4. `generate_code_examples`
+특정 API 엔드포인트에 대한 코드 예시를 생성합니다.
+
+**파라미터:**
+- `url` (필수): API 문서의 URL
+- `endpoint_path` (필수): 코드 예시를 생성할 엔드포인트 경로
+- `cookies` (선택): 인증에 필요한 쿠키 딕셔너리
+
+### 5. `search_endpoints`
+API 엔드포인트에서 특정 키워드를 검색합니다.
+
+**파라미터:**
+- `url` (필수): API 문서의 URL
+- `search_term` (필수): 검색할 키워드
+- `cookies` (선택): 인증에 필요한 쿠키 딕셔너리
+
+### 6. `get_api_info`
+API 문서의 기본 정보를 가져옵니다.
+
+**파라미터:**
+- `url` (필수): API 문서의 URL
+- `cookies` (선택): 인증에 필요한 쿠키 딕셔너리
+
+### 7. `export_api_docs`
+API 문서를 다양한 형식으로 내보냅니다.
+
+**파라미터:**
+- `url` (필수): API 문서의 URL
+- `format` (선택): 내보낼 형식 (json, markdown) (기본값: json)
+- `cookies` (선택): 인증에 필요한 쿠키 딕셔너리
 
 ## 📊 분석 결과 예시
 
@@ -100,6 +175,12 @@ _인증/로그인 기능 구현을 위한 API들_
 - `POST` /api/auth/login (로그인)
 - `POST` /api/auth/logout (로그아웃)
 - `GET` /api/auth/me (현재 사용자 정보)
+
+### 💡 결제/결제 페이지
+_결제/결제 기능 구현을 위한 API들_
+- `POST` /api/payments (결제 생성)
+- `GET` /api/payments/{id} (결제 정보 조회)
+- `PUT` /api/payments/{id}/cancel (결제 취소)
 ```
 
 ## 🏗️ 프로젝트 구조
@@ -123,23 +204,30 @@ apidocs-mcp-server/
 - `fetch_html_docs()`: HTML 형태의 API 문서 가져오기
 - `analyze_swagger_docs()`: API 문서 분석 및 구조화
 - `_generate_frontend_recommendations()`: 프론트엔드 추천 생성
+- `health_check_endpoint()`: 개별 엔드포인트 상태 확인
+- `generate_code_examples()`: 코드 예시 생성
 
 ### 분석 결과 모델
 - `APIEndpoint`: 개별 API 엔드포인트 정보
 - `FrontendRecommendation`: 페이지별 API 추천
 - `AnalysisResult`: 전체 분석 결과
+- `APIHealthCheck`: API 상태 확인 결과
+- `CodeExample`: 코드 예시 모델
 
 ## 🎯 프론트엔드 추천 로직
 
 서버는 다음과 같은 기준으로 API를 그룹화하여 추천합니다:
 
-- **사용자 관리**: `user`, `member` 키워드 포함
-- **인증/로그인**: `auth`, `login` 키워드 포함
+- **사용자 관리**: `user`, `member`, `customer` 키워드 포함
+- **인증/로그인**: `auth`, `login`, `token`, `oauth` 키워드 포함
+- **결제/결제**: `payment`, `pay`, `billing`, `charge` 키워드 포함
+- **파일 업로드**: `upload`, `file`, `image`, `media` 키워드 포함
+- **검색**: `search`, `find`, `query` 키워드 포함
+- **통계/분석**: `stats`, `analytics`, `report`, `metric` 키워드 포함
+- **알림/메시지**: `notification`, `message`, `alert`, `push` 키워드 포함
+- **설정/관리**: `config`, `setting`, `admin`, `management` 키워드 포함
 - **데이터 조회**: GET 메서드
 - **데이터 생성/수정**: POST, PUT, PATCH 메서드
-- **파일 업로드**: 파일 관련 키워드
-- **검색**: 검색 관련 키워드
-- **통계/분석**: 통계 관련 키워드
 
 ## 🔧 개발 환경 설정
 
